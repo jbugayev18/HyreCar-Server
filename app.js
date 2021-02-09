@@ -12,6 +12,10 @@ app.get("/", (req, res) => {
   res.send("Hello Express");
 });
 
+app.get("/hello", (req, res) => {
+  res.status(204).end();
+});
+
 app.get("/echo", (req, res) => {
   const responseText = `Here are some details of your request:
   ID: ${req.ID}
@@ -29,7 +33,7 @@ app.get("/queryViewer", (req, res) => {
   res.end(); // does not send any data to the client
 });
 
-app.get("/cars"),
+app.get("/car"),
   (req, res) => {
     //1. get values from the request
     const id = req.query.id;
@@ -91,6 +95,33 @@ app.get("/greetings", (req, res) => {
 
   //6. send the response
   res.send(greeting);
+});
+
+app.get("/cars", (req, res) => {
+  const cars = [
+    {
+      id: "1",
+      make: "BMW",
+      model: "i8",
+      year: "2020",
+      VIN: "5YJBMWSI89DFP1471",
+    },
+    {
+      id: "2",
+      make: "BMW",
+      model: "3 Series",
+      year: "2020",
+      VIN: "5YJBMWSI89DFP1472",
+    },
+    {
+      id: "3",
+      make: "Jaguar",
+      model: "F-TYPE",
+      year: "2021",
+      VIN: "5YJBMWSI89DFP1473",
+    },
+  ];
+  res.json(cars);
 });
 
 app.listen(8000, () => {
