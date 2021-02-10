@@ -5,7 +5,9 @@ const morgan = require("morgan");
 const app = express();
 //This is middleware that requests pass through
 //on their way to the final handler
-app.use(morgan("dev"));
+app.use(morgan("common"));
+
+const cars = require("./cars-data.js");
 
 //This is the final request handler
 app.get("/", (req, res) => {
@@ -33,46 +35,46 @@ app.get("/queryViewer", (req, res) => {
   res.end(); // does not send any data to the client
 });
 
-app.get("/car"),
-  (req, res) => {
-    //1. get values from the request
-    const id = req.query.id;
-    const make = req.query.make;
-    const model = req.query.model;
-    const year = req.query.year;
-    const vin = req.query.vin;
-    //2. validate the values
-    if (!id) {
-      //3. id was not provided
-      return res.status(400).send("Please provide an ID");
-    }
+// app.get("/car"),
+//   (req, res) => {
+//     //1. get values from the request
+//     const id = req.query.id;
+//     const make = req.query.make;
+//     const model = req.query.model;
+//     const year = req.query.year;
+//     const vin = req.query.vin;
+//     //2. validate the values
+//     if (!id) {
+//       //3. id was not provided
+//       return res.status(400).send("Please provide an ID");
+//     }
 
-    if (!make) {
-      //3. make was not provided
-      return res.status(400).send("Please provide a make");
-    }
+//     if (!make) {
+//       //3. make was not provided
+//       return res.status(400).send("Please provide a make");
+//     }
 
-    if (!model) {
-      //3. model was not provided
-      return res.status(400).send("Please provide a model");
-    }
+//     if (!model) {
+//       //3. model was not provided
+//       return res.status(400).send("Please provide a model");
+//     }
 
-    if (!year) {
-      //3. year was not provided
-      return res.status(400).send("Please provide a year");
-    }
+//     if (!year) {
+//       //3. year was not provided
+//       return res.status(400).send("Please provide a year");
+//     }
 
-    if (!vin) {
-      //3. vin was not provided
-      return res.status(400).send("Please provide a vin");
-    }
+//     if (!vin) {
+//       //3. vin was not provided
+//       return res.status(400).send("Please provide a vin");
+//     }
 
-    //4. If all values are valid
-    const registeredCar = `Your car: ${id}, ${make}, ${model}, ${year}, and ${vin} is successfully registered!`;
+//     //4. If all values are valid
+//     const registeredCar = `Your car: ${id}, ${make}, ${model}, ${year}, and ${vin} is successfully registered!`;
 
-    //5. send the response
-    res.send(registeredCar);
-  };
+//     //5. send the response
+//     res.send(registeredCar);
+//   };
 
 app.get("/greetings", (req, res) => {
   //1. get values from the request
@@ -97,31 +99,29 @@ app.get("/greetings", (req, res) => {
   res.send(greeting);
 });
 
+// ACTUAL CODE FOR THIS PROJECT
 app.get("/cars", (req, res) => {
-  const cars = [
-    {
-      id: "1",
-      make: "BMW",
-      model: "i8",
-      year: "2020",
-      VIN: "5YJBMWSI89DFP1471",
-    },
-    {
-      id: "2",
-      make: "BMW",
-      model: "3 Series",
-      year: "2020",
-      VIN: "5YJBMWSI89DFP1472",
-    },
-    {
-      id: "3",
-      make: "Jaguar",
-      model: "F-TYPE",
-      year: "2021",
-      VIN: "5YJBMWSI89DFP1473",
-    },
-  ];
-  res.json(cars);
+  const { search = "", sort } = req.query;
+
+  if (sort) {
+    if (!["make"].includes(sort)) {
+      return res.status(400).send("Sort must be make");
+    }
+  }
+
+  //We will filter through cars to find a car of a certain make.
+  //Search is case insensitive
+  let results = cars.filter((car) =>
+    car.make.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (sort) {
+    results.sort((a, b) => {
+      return a[sort] > b[sort] ? 1 : a[sort] < b[sort] ? -1 : 0;
+    });
+  }
+
+  res.json(results);
 });
 
 app.listen(8000, () => {
