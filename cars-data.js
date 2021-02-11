@@ -15,9 +15,16 @@ module.exports = [
   },
   {
     id: "3",
+    make: "BMW",
+    model: "i8",
+    year: "2019",
+    VIN: "5YJBMWSI89DFP1473",
+  },
+  {
+    id: "4",
     make: "Jaguar",
     model: "F-TYPE",
     year: "2021",
-    VIN: "5YJBMWSI89DFP1473",
+    VIN: "5YJBMWSI89DFP1474",
   },
 ];
