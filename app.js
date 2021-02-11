@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
+const helmet = require("helmet");
 const cors = require("cors");
 
 //Creates new application object that encapsulates the functionality of Express server.
@@ -8,8 +9,9 @@ const app = express();
 //This is middleware that requests pass through
 //on their way to the final handler
 app.use(morgan("dev"));
-app.use(validateBearerToken);
+// app.use(validateBearerToken);
 
+app.use(helmet());
 app.use(cors());
 
 console.log(process.env.API_TOKEN);
@@ -67,11 +69,11 @@ const cars = require("./cars-data.js");
 
 // ACTUAL CODE FOR THIS PROJECT
 app.use(function validateBearerToken(req, res, next) {
-  const bearerToken = req.get("Authorization").split(" ")[1];
   const apiToken = process.env.API_TOKEN;
+  const authToken = req.get("Authorization");
   console.log("validate bearer token middleware");
 
-  if (bearerToken !== apiToken) {
+  if (!authToken || authToken.split(" ")[1] !== apiToken) {
     return res.status(401).json({ error: "Unauthorized request" });
   }
   //move to the next middleware
@@ -83,7 +85,7 @@ function handleGetCar(req, res) {
 
   if (sort) {
     if (!["model", "year", "VIN"].includes(sort)) {
-      return res.status(400).send("Sort must be one of model or year or VPN");
+      return res.status(400).send("Sort must be one of model or year or VIN");
     }
   }
 
