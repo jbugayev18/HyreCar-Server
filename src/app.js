@@ -26,18 +26,16 @@ const cars = require("./cars-data.js");
 
 app.use("/api/auth", authRouter);
 
-app.use(function errorHandler(error, req, res, next){
-  let response 
-  if (NODE_ENV === 'product') {
-    response = { error: 'Server error'}
+app.use(function errorHandler(error, req, res, next) {
+  let response;
+  if (NODE_ENV === "product") {
+    response = { error: "Server error" };
   } else {
-    console.error(error)
-    response = { error: error.message, object:error}
+    console.error(error);
+    response = { error: error.message, object: error };
   }
-  res.status(500).json(response)
-})
-
-
+  res.status(500).json(response);
+});
 
 app.use(function validateBearerToken(req, res, next) {
   const apiToken = process.env.API_TOKEN;
@@ -81,4 +79,4 @@ app.get("/cars", handleGetCar);
 //   console.log("Express server is listening on port 8000!");
 // });
 
-module.exports = app
+module.exports = app;
